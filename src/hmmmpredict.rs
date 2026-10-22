@@ -16,11 +16,10 @@ impl<T> HmmmModel<T> {
 }
 
 impl<T> HmmmPredict<T> {
-    pub fn new(hmm: HMM, rng: StdRng) -> Self {
+    pub fn new(hmm: HMM, _rng: StdRng) -> Self {
         HmmmPredict {
             marker: Default::default(),
             hmm,
-            rng,
             history: Vec::new(),
         }
     }
@@ -41,9 +40,9 @@ impl<T> HmmmPredict<T> {
             }
             // Update P(hidden state | observations so far) using Bayes' rule.
             let mut total = 0.0;
-            for state in 0..states {
-                posterior[state] *= self.hmm.b[[state, symbol]];
-                total += posterior[state];
+            for (state, probability) in posterior.iter_mut().enumerate() {
+                *probability *= self.hmm.b[[state, symbol]];
+                total += *probability;
             }
             if !total.is_finite() || total <= 0.0 {
                 return Err("observation history has zero probability under the model".into());
@@ -53,9 +52,9 @@ impl<T> HmmmPredict<T> {
             }
             // Advance to the next hidden state before consuming the next observation.
             let mut next = vec![0.0; states];
-            for i in 0..states {
-                for j in 0..states {
-                    next[j] += posterior[i] * self.hmm.a[[i, j]];
+            for (i, &probability) in posterior.iter().enumerate() {
+                for (j, next_probability) in next.iter_mut().enumerate() {
+                    *next_probability += probability * self.hmm.a[[i, j]];
                 }
             }
             posterior = next;
@@ -64,16 +63,16 @@ impl<T> HmmmPredict<T> {
         let mut forecasts = Vec::with_capacity(steps);
         for _ in 0..steps {
             let mut observation_probs = vec![0.0; symbols];
-            for state in 0..states {
-                for symbol in 0..symbols {
-                    observation_probs[symbol] += posterior[state] * self.hmm.b[[state, symbol]];
+            for (state, &probability) in posterior.iter().enumerate() {
+                for (symbol, observation_probability) in observation_probs.iter_mut().enumerate() {
+                    *observation_probability += probability * self.hmm.b[[state, symbol]];
                 }
             }
             forecasts.push(observation_probs);
             let mut next = vec![0.0; states];
-            for i in 0..states {
-                for j in 0..states {
-                    next[j] += posterior[i] * self.hmm.a[[i, j]];
+            for (i, &probability) in posterior.iter().enumerate() {
+                for (j, next_probability) in next.iter_mut().enumerate() {
+                    *next_probability += probability * self.hmm.a[[i, j]];
                 }
             }
             posterior = next;
@@ -93,7 +92,7 @@ impl<T> TrainF32<HmmmPredict<HMM>> for HmmmModel<T> {
         RI: PredictReadIterator<Item = f32>,
     {
         let data: Vec<usize> = ri.map(|x| x as usize).collect();
-        let hmm = HMM::train(&ndarray::Array1::from_vec(data.clone()), self.hidden_states_k, self.observations_n, &mut self.rng);
+        let hmm = HMM::train(&ndarray::Array1::from(data.clone()), self.hidden_states_k, self.observations_n, &mut self.rng);
         let mut predictor = HmmmPredict::<HMM>::new(hmm, self.rng.clone());
         predictor.set_history(&data);
         predictor

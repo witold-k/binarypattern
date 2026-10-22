@@ -1,6 +1,6 @@
 use binarypattern::*;
 use hmmm::HMM;
-use ndarray::{array, Array1};
+use ndarray::array;
 
 #[test]
 fn forecast_depends_on_observed_history() {
