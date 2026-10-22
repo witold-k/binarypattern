@@ -93,7 +93,7 @@ impl<T> TrainF32<HmmmPredict<HMM>> for HmmmModel<T> {
         RI: PredictReadIterator<Item = f32>,
     {
         let data: Vec<usize> = ri.map(|x| x as usize).collect();
-        let hmm = HMM::train(&ndarray::Array1::from_vec(data.clone()), self.observations_n, self.hidden_states_k, &mut self.rng);
+        let hmm = HMM::train(&ndarray::Array1::from_vec(data.clone()), self.hidden_states_k, self.observations_n, &mut self.rng);
         let mut predictor = HmmmPredict::<HMM>::new(hmm, self.rng.clone());
         predictor.set_history(&data);
         predictor
