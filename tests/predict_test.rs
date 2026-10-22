@@ -5,7 +5,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_last_n() {
+    fn test_binary_prediction() {
 
         let vec = [
             0.0, 1.0, 0.0, 0.0,  1.0, 1.0, 1.0, 1.0,  0.0, 1.0, 1.0, 1.0,  1.0, 0.0, 0.0, 1.0,
