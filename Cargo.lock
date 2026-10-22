@@ -25,9 +25,9 @@ dependencies = [
  "bincode",
  "hmmm",
  "itertools 0.15.0",
- "ndarray"
+ "ndarray",
  "num-traits",
- "rand 0.10.2",
+ "rand 0.7.3",
  "serde",
  "serde_json",
 ]
