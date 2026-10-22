@@ -1,5 +1,7 @@
 use hmmm::HMM;
+use rand_07::SeedableRng as _;
 use rand::SeedableRng as _;
+use rand_07::rngs::StdRng as TrainingRng;
 use rand::rngs::StdRng;
 
 use crate::*;
@@ -10,7 +12,7 @@ impl<T> HmmmModel<T> {
             marker: Default::default(),
             observations_n,
             hidden_states_k,
-            rng: StdRng::seed_from_u64(seed),
+            rng: TrainingRng::seed_from_u64(seed),
         }
     }
 }
@@ -92,8 +94,8 @@ impl<T> TrainF32<HmmmPredict<HMM>> for HmmmModel<T> {
         RI: PredictReadIterator<Item = f32>,
     {
         let data: Vec<usize> = ri.map(|x| x as usize).collect();
-        let hmm = HMM::train(&ndarray::Array1::from(data.clone()), self.hidden_states_k, self.observations_n, &mut self.rng);
-        let mut predictor = HmmmPredict::<HMM>::new(hmm, self.rng.clone());
+        let hmm = HMM::train(&ndarray_013::Array1::from(data.clone()), self.hidden_states_k, self.observations_n, &mut self.rng);
+        let mut predictor = HmmmPredict::<HMM>::new(hmm, StdRng::seed_from_u64(0));
         predictor.set_history(&data);
         predictor
     }

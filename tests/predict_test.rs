@@ -1,6 +1,7 @@
 use binarypattern::*;
 use hmmm::HMM;
-use ndarray::array;
+use ndarray_013::array;
+use rand::SeedableRng as _;
 
 #[test]
 fn forecast_depends_on_observed_history() {
@@ -10,7 +11,7 @@ fn forecast_depends_on_observed_history() {
         array![[1.0, 0.0], [0.0, 1.0]],
         array![0.5, 0.5],
     );
-    let rng = rand::SeedableRng::seed_from_u64(1234);
+    let rng = rand::rngs::StdRng::seed_from_u64(1234);
     let mut predictor = HmmmPredict::<HMM>::new(hmm, rng);
     let after_zero = predictor.forecast_probabilities(&[0], 2).unwrap();
     let after_one = predictor.forecast_probabilities(&[1], 2).unwrap();

@@ -1,6 +1,6 @@
 use binarypattern::{HmmmPredict, PredictFollowF32, TransformResult};
 use hmmm::HMM;
-use ndarray::array;
+use ndarray_013::array;
 use rand::{rngs::StdRng, SeedableRng};
 
 fn persistent_binary_model() -> HmmmPredict<HMM> {
