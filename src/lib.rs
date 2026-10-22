@@ -25,7 +25,7 @@ pub struct HmmmModel<T> {
     marker: PhantomData<T>,
     observations_n:  usize,
     hidden_states_k: usize,
-    rng:    rand::rngs::StdRng
+    rng:    rand_07::rngs::StdRng
 }
 
 pub struct HmmmPredict<T> {
