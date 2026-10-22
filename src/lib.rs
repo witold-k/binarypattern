@@ -31,7 +31,8 @@ pub struct HmmmModel<T> {
 pub struct HmmmPredict<T> {
     marker: PhantomData<T>,
     hmm:    HMM,
-    rng:    rand::rngs::StdRng
+    rng:    rand::rngs::StdRng,
+    history: Vec<usize>
 }
 
 // ---------------------------------------------------------------------------
