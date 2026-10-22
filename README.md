@@ -46,10 +46,11 @@ The legacy `predict(&mut out)` interface returns the **most likely symbol at eac
 ## Tests
 
 ```sh
-cargo test
+cargo test --locked
+cargo clippy --locked
 ```
 
-Tests cover context-sensitive probabilities, multi-step propagation, normalization, invalid observations, and training.
+Tests cover context-sensitive probabilities, multi-step propagation, normalization, invalid observations, training, and edge cases such as empty forecasts and invalid prediction history.\n\n`hmmm 0.2.0` depends on `ndarray 0.13.1`; this project uses the same `ndarray` version so its array types match the training API.
 
 ## Limitations
 
